@@ -26,24 +26,32 @@ class UsuarioView(APIView):
     
 class UsuarioDetailView(APIView):
     
-    def get(self,request,usuario_id):
-        dataUsuarios = Usuario.objects.get(pk=usuario_id)
-        serUsuarios = UsuarioSerializer(dataUsuarios)
-        return Response(serUsuarios.data)
-    
-    def put(self,request,usuario_id):
-        dataUsuarios = Usuario.objects.get(pk=usuario_id)
-        serUsuarios = UsuarioSerializer(dataUsuarios,data=request.data)
-        serUsuarios.is_valid(raise_exception=True)
-        serUsuarios.save()
-        return Response(serUsuarios.data)
-    
-    def delete(self,request,usuario_id):
-        dataUsuarios = Usuario.objects.get(pk=usuario_id)
-        serUsuarios = UsuarioSerializer(dataUsuarios)
-        dataUsuarios.delete()
-        return Response(serUsuarios.data)
+    def get(self,request,nombre, clave):
+        dataUsuarios = Usuario.objects.get(nombre=nombre)
+        if dataUsuarios.clave == clave:
+            serUsuarios = UsuarioSerializer(dataUsuarios)
+            return Response(serUsuarios.data)  
+        else:
+            return Response([])
+        
 
+    def put(self,request,nombre, clave):
+        dataUsuarios = Usuario.objects.get(nombre=nombre)
+        if dataUsuarios.clave == clave:
+            serUsuarios = UsuarioSerializer(dataUsuarios,data=request.data)
+            serUsuarios.is_valid(raise_exception=True)
+            serUsuarios.save()
+            return Response(serUsuarios.data)
+        else:
+            return Response({"message":"Error al actualizar los datos"})
+    def delete(self,request,nombre, clave):
+        dataUsuarios = Usuario.objects.get(nombre=nombre)
+        if dataUsuarios.clave == clave:
+            serUsuarios = UsuarioSerializer(dataUsuarios)
+            dataUsuarios.delete()
+            return Response(serUsuarios.data)
+        else:
+            return Response({"message":"Error al eliminar los datos"})
 class AlmacenView(APIView):
     
     def get(self,request):
